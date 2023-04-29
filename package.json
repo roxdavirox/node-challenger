@@ -1,0 +1,19 @@
+{
+  "name": "muralis",
+  "version": "1.0.0",
+  "description": "nodejs challenger for Muralis",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "node ./src/data/create-database.js && node ./src/data/create-tables.js && node ./src/data/seed.js"
+  },
+  "author": "Davi",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mysql2": "^3.2.4",
+    "pdfkit": "^0.13.0",
+    "xlsx": "^0.18.5"
+  }
+}
