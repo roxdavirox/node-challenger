@@ -2,7 +2,11 @@ const ExpenseRepository = require('../repositories/ExpenseRepository');
 
 exports.getAllExpenses = async (req, res) => {
   try {
-    const expenses = await ExpenseRepository.getAll();
+    const { page = 1, page_size = 5 } = req.query;
+    const limit = Number(page_size) || 10;
+    const offset = (Number(page) - 1) * limit || 0;
+
+    const expenses = await ExpenseRepository.getAll(limit, offset);
     res.json(expenses);
   } catch (error) {
     console.error(error);
