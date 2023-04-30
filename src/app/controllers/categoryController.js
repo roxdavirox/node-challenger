@@ -1,8 +1,8 @@
-const Category = require('../models/Category');
+const CategoryRepository = require('../repositories/CategoryRepository')
 
 exports.getAllCategories = async (req, res) => {
   try {
-    const categories = await Category.findAll();
+    const categories = await CategoryRepository.getAll();
     res.json(categories);
   } catch (error) {
     console.error(error);
@@ -13,9 +13,9 @@ exports.getAllCategories = async (req, res) => {
 exports.getCategoryById = async (req, res) => {
   const { id } = req.params;
   try {
-    const category = await Category.findByPk(id);
-    if (category) {
-      res.json(category);
+    const foundCategory = await CategoryRepository.getById(id);
+    if (foundCategory) {
+      res.json(foundCategory);
     } else {
       res.status(404).json({ message: `Category with id ${id} not found` });
     }
@@ -26,9 +26,9 @@ exports.getCategoryById = async (req, res) => {
 };
 
 exports.createCategory = async (req, res) => {
-  const { name } = req.body;
+  const { name, description } = req.body;
   try {
-    const category = await Category.create({ name });
+    const category = await CategoryRepository.create({ name, description });
     res.json(category);
   } catch (error) {
     console.error(error);
@@ -38,11 +38,11 @@ exports.createCategory = async (req, res) => {
 
 exports.updateCategory = async (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const { name, description } = req.body;
   try {
-    const category = await Category.findByPk(id);
-    if (category) {
-      await category.update({ name });
+    const foundCategory = await CategoryRepository.getById(id);
+    if (foundCategory) {
+      const category = await CategoryRepository.update(id, { name, description });
       res.json(category);
     } else {
       res.status(404).json({ message: `Category with id ${id} not found` });
@@ -53,12 +53,38 @@ exports.updateCategory = async (req, res) => {
   }
 };
 
+exports.partialUpdateCategory = async (req, res) => {
+  const { id } = req.params;
+  const fieldsToUpdate = req.body;
+
+  try {
+    const foundCategory = await CategoryRepository.getById(id);
+    if (foundCategory) {
+
+      const validFields = Object.keys(fieldsToUpdate).every(field => foundCategory.hasOwnProperty(field));
+      if (!validFields) {
+        return res.status(400).json({ message: 'One or more invalid fields provided' });
+      }
+
+      const updatedCategory = await CategoryRepository.update(id, { ...foundCategory, ...fieldsToUpdate });
+      res.json(updatedCategory);
+    } else {
+      res.status(404).json({ message: `Category with id ${id} not found` });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+
 exports.deleteCategory = async (req, res) => {
   const { id } = req.params;
   try {
-    const category = await Category.findByPk(id);
-    if (category) {
-      await category.destroy();
+    const foundCategory = await CategoryRepository.getById(id);
+
+    if (foundCategory) {
+      await CategoryRepository.deleteEntityAndAssociations(id, ['expenses']);
       res.json({ message: `Category with id ${id} deleted successfully` });
     } else {
       res.status(404).json({ message: `Category with id ${id} not found` });
@@ -68,3 +94,4 @@ exports.deleteCategory = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
