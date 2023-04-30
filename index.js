@@ -1,6 +1,4 @@
 const express = require('express');
-
-const xlsx = require('xlsx');
 const formatResponseMiddleware = require('./src/app/middleware/formatResponseMiddleware');
 const routes = require('./src/app/routes/routes');
 

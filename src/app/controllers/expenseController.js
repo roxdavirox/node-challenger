@@ -1,5 +1,6 @@
 const pdfkit = require('pdfkit');
 const axios = require('axios');
+const ExcelJS = require('exceljs');
 const moment = require('moment');
 
 const ExpenseRepository = require('../repositories/ExpenseRepository');
@@ -52,6 +53,56 @@ exports.getAllExpensesPdfByDate = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 }
+
+exports.getCurrentMonthExpensesExcel = async (req, res) => {
+  try {
+    const currentDate = moment().format('YYYY-MM-DD');
+    const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
+    const endOfMonth = moment().endOf('month').format('YYYY-MM-DD');
+
+    const result = await ExpenseRepository.getAll();
+
+    const filteredExpenses = result.expenses.filter((expense) => {
+      const purchaseDate = moment(expense.purchase_date).format('YYYY-MM-DD');
+      return purchaseDate >= startOfMonth && purchaseDate <= endOfMonth;
+    });
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Despesas');
+
+    worksheet.columns = [
+      { header: 'ID', key: 'id', width: 10 },
+      { header: 'Descrição', key: 'description', width: 30 },
+      { header: 'Valor', key: 'value', width: 15 },
+      { header: 'Data', key: 'purchase_date', width: 15 },
+      { header: 'Categoria', key: 'category_name', width: 20 },
+      { header: 'Tipo de Pagamento', key: 'payment_type_name', width: 20 },
+      { header: 'Endereço', key: 'address', width: 40 }
+    ];
+
+    filteredExpenses.forEach(expense => {
+      const row = {
+        id: expense.id,
+        description: expense.description,
+        value: expense.value,
+        purchase_date: moment(expense.purchase_date).format('DD/MM/YYYY'),
+        category_name: expense.category_name,
+        payment_type_name: expense.payment_type_name,
+        address: expense.address
+      };
+      worksheet.addRow(row);
+    });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=despesas-${currentDate}.xlsx`);
+    return workbook.xlsx.write(res).then(() => {
+      res.status(200).end();
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Erro ao gerar planilha de despesas');
+  }
+};
 
 exports.getAddress = async (req, res) => {
   const { zipcode, number } = req.query;
