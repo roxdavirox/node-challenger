@@ -16,6 +16,7 @@ router.get('/expenses', expenseController.getAllExpenses);
 router.get('/expenses/:id', expenseController.getExpenseById);
 router.post('/expenses', expenseController.createExpense);
 router.put('/expenses/:id', expenseController.updateExpense);
+router.patch('/expenses/:id', expenseController.partialUpdateExpense);
 router.delete('/expenses/:id', expenseController.deleteExpense);
 
 // Rotas para Category

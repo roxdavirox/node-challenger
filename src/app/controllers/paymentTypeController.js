@@ -56,9 +56,9 @@ exports.updatePaymentType = async (req, res) => {
 exports.deletePaymentType = async (req, res) => {
   const { id } = req.params;
   try {
-    const findedPaymentType = await PaymentTypeRepository.getById(id);
+    const foundPaymentType = await PaymentTypeRepository.getById(id);
 
-    if (findedPaymentType) {
+    if (foundPaymentType) {
       await PaymentTypeRepository.deleteEntityAndAssociations(id, ['expenses']);
       res.json({ message: `PaymentType with id ${id} deleted successfully` });
     } else {
