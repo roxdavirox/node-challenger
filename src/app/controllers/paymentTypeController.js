@@ -13,7 +13,7 @@ exports.getAllPaymentTypes = async (req, res) => {
 exports.getPaymentTypeById = async (req, res) => {
   const { id } = req.params;
   try {
-    const paymentType = await PaymentType.findByPk(id);
+    const paymentType = await PaymentTypeRepository.getById(id);
     if (paymentType) {
       res.json(paymentType);
     } else {
@@ -28,7 +28,7 @@ exports.getPaymentTypeById = async (req, res) => {
 exports.createPaymentType = async (req, res) => {
   const { type } = req.body;
   try {
-    const paymentType = await PaymentType.create({ type });
+    const paymentType = await PaymentTypeRepository.create({ type });
     res.json(paymentType);
   } catch (error) {
     console.error(error);
@@ -40,9 +40,9 @@ exports.updatePaymentType = async (req, res) => {
   const { id } = req.params;
   const { type } = req.body;
   try {
-    const paymentType = await PaymentType.findByPk(id);
-    if (paymentType) {
-      await paymentType.update({ type });
+    const findedPaymentType = await PaymentTypeRepository.getById(id);
+    if (findedPaymentType) {
+      const paymentType = await PaymentTypeRepository.update(id , { type });
       res.json(paymentType);
     } else {
       res.status(404).json({ message: `PaymentType with id ${id} not found` });
@@ -56,9 +56,10 @@ exports.updatePaymentType = async (req, res) => {
 exports.deletePaymentType = async (req, res) => {
   const { id } = req.params;
   try {
-    const paymentType = await PaymentType.findByPk(id);
-    if (paymentType) {
-      await paymentType.destroy();
+    const findedPaymentType = await PaymentTypeRepository.getById(id);
+
+    if (findedPaymentType) {
+      await PaymentTypeRepository.delete(id);
       res.json({ message: `PaymentType with id ${id} deleted successfully` });
     } else {
       res.status(404).json({ message: `PaymentType with id ${id} not found` });
