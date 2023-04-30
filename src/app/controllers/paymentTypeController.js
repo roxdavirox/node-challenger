@@ -40,8 +40,8 @@ exports.updatePaymentType = async (req, res) => {
   const { id } = req.params;
   const { type } = req.body;
   try {
-    const findedPaymentType = await PaymentTypeRepository.getById(id);
-    if (findedPaymentType) {
+    const foundPaymentType = await PaymentTypeRepository.getById(id);
+    if (foundPaymentType) {
       const paymentType = await PaymentTypeRepository.update(id , { type });
       res.json(paymentType);
     } else {
@@ -59,7 +59,7 @@ exports.deletePaymentType = async (req, res) => {
     const findedPaymentType = await PaymentTypeRepository.getById(id);
 
     if (findedPaymentType) {
-      await PaymentTypeRepository.delete(id);
+      await PaymentTypeRepository.deleteEntityAndAssociations(id, ['expenses']);
       res.json({ message: `PaymentType with id ${id} deleted successfully` });
     } else {
       res.status(404).json({ message: `PaymentType with id ${id} not found` });

@@ -56,6 +56,23 @@ class Repository {
       throw new Error('Internal Server Error');
     }
   }
+
+  async deleteEntityAndAssociations(id, associations) {
+    try {
+      const deletePromises = associations.map((tableName) => {
+        return db.promise().query(`DELETE FROM ${tableName} WHERE category_id = ?`, [id]);
+      });
+
+      await Promise.all(deletePromises);
+
+      const entity = await this.delete(id);
+      return entity;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal Server Error');
+    }
+  }
+
 }
 
 module.exports = Repository;
