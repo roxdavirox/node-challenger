@@ -12,11 +12,7 @@ const pool = createPool({
 });
 
 const generatePaymentTypes = async () => {
-  const paymentTypes = [];
-  for (let i = 0; i < 5; i++) {
-    const type = 'payment_type_' + (i + 1);
-    paymentTypes.push(`('${type}')`);
-  }
+  const paymentTypes = ['Dinheiro', 'Débito', 'Crédito', 'Pix'];
   const paymentTypesQuery = `INSERT INTO payment_types (type) VALUES ${paymentTypes.join(',')}`;
   const [paymentTypesResult] = await pool.execute(paymentTypesQuery);
   console.log(`Inserted ${paymentTypesResult.affectedRows} payment types`);
