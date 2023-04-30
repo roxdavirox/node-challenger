@@ -1,4 +1,5 @@
 const pdfkit = require('pdfkit');
+const axios = require('axios');
 const moment = require('moment');
 
 const ExpenseRepository = require('../repositories/ExpenseRepository');
@@ -38,7 +39,6 @@ exports.getAllExpensesPdfByDate = async (req, res) => {
     pdfDoc.moveDown();
     pdfDoc.fontSize(12).text(`Data    | Descrição                                     | Valor`, { align: 'left' });
 
-    console.log('filteredExpenses', filteredExpenses)
     filteredExpenses.forEach((expense) => {
       pdfDoc.moveDown();
       pdfDoc.fontSize(10)
@@ -50,6 +50,29 @@ exports.getAllExpensesPdfByDate = async (req, res) => {
   } catch(error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+exports.getAddress = async (req, res) => {
+  const { zipcode, number } = req.query;
+
+  try {
+    const response = await axios.get(`https://viacep.com.br/ws/${zipcode}/json/`);
+    const { logradouro, bairro, localidade, uf } = response.data;
+
+    const address = {
+      street: logradouro,
+      neighborhood: bairro,
+      city: localidade,
+      state: uf,
+      zipcode,
+      number
+    };
+
+    res.json(address);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal server error');
   }
 }
 
