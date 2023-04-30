@@ -1,3 +1,6 @@
+const pdfkit = require('pdfkit');
+const moment = require('moment');
+
 const ExpenseRepository = require('../repositories/ExpenseRepository');
 
 exports.getAllExpenses = async (req, res) => {
@@ -13,6 +16,42 @@ exports.getAllExpenses = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
+exports.getAllExpensesPdfByDate = async (req, res) => {
+  try {
+    const startDate = moment(req.query.start_date).startOf('day').toISOString();
+    const endDate = moment(req.query.end_date).endOf('day').toISOString();
+
+    const result = await ExpenseRepository.getAll();
+
+    const filteredExpenses = result.expenses.filter((expense) => {
+      const purchaseDate = moment(expense.purchase_date).toISOString();
+      return purchaseDate >= startDate && purchaseDate <= endDate;
+    });
+
+    const pdfDoc = new pdfkit();
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename=${startDate}_${endDate}.pdf`);
+    pdfDoc.pipe(res);
+
+    pdfDoc.fontSize(18).text(`Despesas entre ${startDate} e ${endDate}`, { align: 'center' });
+    pdfDoc.moveDown();
+    pdfDoc.fontSize(12).text(`Data    | Descrição                                     | Valor`, { align: 'left' });
+
+    console.log('filteredExpenses', filteredExpenses)
+    filteredExpenses.forEach((expense) => {
+      pdfDoc.moveDown();
+      pdfDoc.fontSize(10)
+        .text(`${new Date(expense.purchase_date)
+        .toLocaleDateString('pt-BR')} | ${expense.description.padEnd(45)} | R$ ${expense.value}`, { align: 'left' });
+    });
+
+    pdfDoc.end();
+  } catch(error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
 
 exports.getExpenseById = async (req, res) => {
   const { id } = req.params;

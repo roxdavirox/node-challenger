@@ -13,6 +13,7 @@ router.delete('/payment-types/:id', paymentTypeController.deletePaymentType);
 
 // Rotas para Expense
 router.get('/expenses', expenseController.getAllExpenses);
+router.get('/expenses/pdf', expenseController.getAllExpensesPdfByDate);
 router.get('/expenses/:id', expenseController.getExpenseById);
 router.post('/expenses', expenseController.createExpense);
 router.put('/expenses/:id', expenseController.updateExpense);
