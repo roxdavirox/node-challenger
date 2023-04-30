@@ -1,8 +1,8 @@
-const PaymentType = require('../models/PaymentType');
+const PaymentTypeRepository = require('../repositories/PaymentTypeRepository');
 
 exports.getAllPaymentTypes = async (req, res) => {
   try {
-    const paymentTypes = await PaymentType.findAll();
+    const paymentTypes = await PaymentTypeRepository.getAll();
     res.json(paymentTypes);
   } catch (error) {
     console.error(error);
