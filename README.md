@@ -1,4 +1,5 @@
 
+
 # Node Challenger
 
 Este é um projeto em Node.js, que consiste em uma API para gerenciamento DESPESAS.
@@ -16,8 +17,11 @@ A API possui as seguintes funcionalidades:
 
 -   Cadastro de despesa (POST /expenses)
 -   Busca de todas as despesas (GET /expenses)
+-	Buscar despesas com filtro e gerar PDF (GET /expenses/pdf?start_date=2023-01-01&end_date=2023-04-30)
+-   Buscar despesas do mês atual e gerar um excel(GET /expenses/excel/:id)
 -   Busca de uma despesa específica (GET /expenses/:id)
 -   Edição de uma despesa(PUT /expenses/:id)
+-   Edição parcial de uma despesa(PATCH /expenses/:id)
 -   Exclusão de uma despesa (DELETE /expenses/:id)
 
 ### Categorias
@@ -75,10 +79,15 @@ Após iniciar o servidor, a API estará disponível em `http://localhost:3000`.
 >
 >     {
 >     	    "value": 50.0,
->		    		"purchase_date": "2023-04-29 14:30:00",
+>		    	"purchase_date": "2023-04-29 14:30:00",
 >     	    "description": "Compras do mês",
 >     	    "payment_type_id": 1,
 >     	    "category_id": 2
 >     }
 
 
+2. Obter despesas em PDF:
+> GET /expenses/pdf?start_date=2023-01-01&end_date=2023-04-30
+
+3. Obter despesas no excel:
+> GET /expenses/excel
