@@ -9,6 +9,13 @@ Este é um projeto em Node.js, que consiste em uma API para gerenciamento DESPES
 -   Node.js
 -   Express
 
+## Conceitos
+- Clean code
+- SOLID(mas, nao completo - sem o principio de liskov)
+- design pattern: repository pattern para encapsular o acesso ao banco
+- POO
+- Funcional(alguns trechos de detalhes de implementação com paradigma funcional)
+
 ## Funcionalidades
 
 A API possui as seguintes funcionalidades:
@@ -91,3 +98,7 @@ Após iniciar o servidor, a API estará disponível em `http://localhost:3000`.
 
 3. Obter despesas no excel:
 > GET /expenses/excel
+
+## Modelo
+<img width="646" alt="image" src="https://user-images.githubusercontent.com/15786094/235546653-fcbe16fd-1e97-4cf0-921e-977111dc7807.png">
+
