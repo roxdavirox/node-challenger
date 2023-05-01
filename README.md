@@ -79,7 +79,7 @@ Após iniciar o servidor, a API estará disponível em `http://localhost:3000`.
 >
 >     {
 >     	    "value": 50.0,
->		    	"purchase_date": "2023-04-29 14:30:00",
+>		          "purchase_date": "2023-04-29 14:30:00",
 >     	    "description": "Compras do mês",
 >     	    "payment_type_id": 1,
 >     	    "category_id": 2
